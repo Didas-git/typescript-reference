@@ -41,7 +41,7 @@ let num = 3;
 ```
 
 - `bigint` -
-A bingint is a integer represented in an [arbitrary precision format](https://en.wikipedia.org/wiki/Arbitrary-precision_arithmetic). In javascript is represented by a number followed by `n`
+A bigint is a integer represented in an [arbitrary precision format](https://en.wikipedia.org/wiki/Arbitrary-precision_arithmetic). In javascript is represented by a number followed by `n`
 
 ```ts
 let bint = 3n;
@@ -52,6 +52,21 @@ A boolean is a type that can be either `true` or `false`.
 
 ```ts
 let bool = true;
+```
+
+- `object` -
+The object primitive represents anything that has an index signature and isn't another primitive.
+
+```ts
+// @errors: 2322 2339 7053 2349
+let a: object;
+
+a = "";
+a = 3;
+a = {};
+a.foo();
+a["bar"];
+a();
 ```
 
 - `undefined` -
@@ -79,8 +94,8 @@ const sym1: unique symbol = Symbol()
 let sym2: unique symbol = Symbol()
 ```
 
-- `null` -
-For information about null refer to the [MDN](https://developer.mozilla.org/en-US/docs/Glossary/Null) docs.
+- [`null`](https://developer.mozilla.org/en-US/docs/Glossary/Null) -
+A primitive type annotating that no memory address is assigned to this variable. It behaves similar to undefined however, it's considered an object.
 
 ```ts
 const n1 = null
@@ -106,7 +121,7 @@ const b: number = a;
 ```
 
 - `unknown` -
-Basically the same as `any` but doesnt allow dot notation, indexing and assigning to other variables. Using `unknown` over `any` is recommended and you should always do it unless you encounter some odd cases.
+Basically the same as `any` but doesnt allow dot notation, indexing and assigning to other variables. Using `unknown` over `any` is highly recommended to prevent possible oversights.
 
 ```ts
 // @errors: 2571 2322
@@ -122,16 +137,15 @@ a();
 const b: number = a
 ```
 
-- `never` -
+- [`never`](https://www.typescriptlang.org/docs/handbook/2/functions.html#never) -
 The never type can usually appear when union types have nothing left and can be used as a return type for functions that throw exeptions. The most comun use of `never` is on [condtional](#conditional-types) and [complex](#complex-types) types but more on that later.
 
 ```ts
-//source: https://www.typescriptlang.org/docs/handbook/2/functions.html#never
 function fail(msg: string): never {
     throw new Error(msg)
 }
 
-function fn(x: string | number) {
+function fn(x: string | number): void {
     if (typeof x === "string") {
         // do something
     } else if (typeof x === "number") {
@@ -144,21 +158,20 @@ function fn(x: string | number) {
 ```
 
 - `void` -
-`void` is a typescript type that is used for functions that do not return anything or return functions that return void
+`void` is a typescript type that is used for functions that do not return anything or return functions that return void.
 
 ```ts
 function returnVoid() {
+//       ^?
     return;
 }
 ```
-
-[^1]: There is a way to reproduce the same symbol every time.
 
 ### Type Declaration
 
 #### Implicit
 
-Implicit type declaration is when you declare a variable without providing a type directly and living that work to the compiler.
+An implicit type declaration is when you declare a variable without providing a type directly and leaving that work to the compiler.
 
 ```ts
 let str = "A string";
@@ -167,7 +180,7 @@ let str = "A string";
 
 #### Explicit
 
-Explicit type declaration is when you declare a variable assigning it a type.
+An explicit type declaration is when you declare a variable with an assigned type.
 
 ```ts
 let str: string = "A string";
@@ -180,7 +193,7 @@ let str: string = "A string";
 
 ##### [Type Alias](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-aliases)
 
-The `type` keyword is used to create and name any type but as it is only an alias it cannot be used to create  different or unique versions of the same type.
+The `type` keyword is used to create and name any type but as it is only an alias, it cannot be used to create  different or unique versions of the same type.
 
 ```ts
 type Point = {
@@ -188,33 +201,72 @@ type Point = {
     y: number
 };
 
-type SanitizedString = string;
+type ConcatenatedString = string;
 
-function sanitizeInput(str: string): SanitizedString {
-    return str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim,"").trim()
+function concat(str1: string, str2: string): ConcatenatedString {
+  return str1 + str2;
 }
 
 // Create a sanitized input
-let userInput = sanitizeInput("hello\nworld");
+let helloWorld = concat("hello ", "world");
  
 // Can still be re-assigned with a string though
-userInput = "new input";
+helloWorld = "Hello";
 ```
 
 ##### Intersection
 
-The intersection operator (`&`) can be used just like the `extends` keyword but for types instead of interfaces.
+The intersection operator (`&`) can be used just like the `extends` keyword but for type alises instead of classes.
+
+```ts
+// @errors: 2345
+interface Circle {
+    radius: number;
+}
+
+interface Colors {
+    r: number;
+    g: number;
+    b: number;
+}
+
+type ColorfullCircle = Circle & Colors;
+
+// It can also be used inside functions
+function draw(circle: Circle & Colors): Circle & Colors {
+    return circle;
+}
+
+draw({ radius: 30 })
+```
 
 ##### Union
 
+The union operator (`|`) in typescript works like an `or`.</br>
+When paired with `never` a union type will ignore it and removei t from the union.
+
+```ts
+// @errors: 2322
+type StringOrNumber = string | number;
+
+let a: StringOrNumber = "A string";
+a = 3;
+a = true;
+a = {};
+
+// As you can see the `never` is excluded
+type BooleanOrNumber = boolean | never | number
+//   ^?
+```
+
 ##### [Interfaces](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#interfaces)
 
-An `interface` declaration is another way to declare a type but its most used to declare object types
+An `interface` declaration is another way to declare a type. It's mostly used to declare object types. They can be extended by other interfaces and implemented in classes using the implements keyword.
 
 ```ts
 interface Point {
     x: number;
-    y: number
+    y: number;
 }
 ```
 
@@ -239,11 +291,11 @@ Type alias and interface are pretty simillar, the main differences are:
 
 ```ts
 interface Animal {
-    name: string
+    name: string;
 }
 
 interface Cat extends Animal {
-    race: string
+    race: string;
 }
 ```
 
@@ -276,11 +328,11 @@ type Cat = Animal & {
 
 ```ts
 interface Story {
-    title: string
+    title: string;
 }
 
 interface Story {
-    body: string
+    body: string;
 }
 ```
 
@@ -310,3 +362,5 @@ Main Sources
 ------------
 [**`MDN`**](https://developer.mozilla.org/)</br>
 [**`TS Handbook`**](https://www.typescriptlang.org/docs/handbook)
+
+[^1]: `Symbol.for` can bypass this unique behaviour, red the [MDN Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/for) for more information.
