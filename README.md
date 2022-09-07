@@ -61,7 +61,7 @@ const sym = Symbol();
 - `unique symbol` -
 A unique symbol is a subtype of symbol and can only appear if explicit assigned and can only be assigned to a constant using `Symbol()` and `Symbol.for()`.
 
-```ts 
+```ts
 const sym1: unique symbol = Symbol()
 
 let sym2: unique symbol = Symbol()
@@ -122,7 +122,7 @@ const b: number = a
 - `never` -
 The never type can usually appear when union types have nothing left and can be used as a return type for functions that throw exeptions. The most comun use of `never` is on [condtional](#conditional-types) and [complex](#complex-types) types but more on that later.
 
-```ts 
+```ts
 //source: https://www.typescriptlang.org/docs/handbook/2/functions.html#never
 function fail(msg: string): never {
 	throw new Error(msg)
@@ -157,7 +157,7 @@ function returnVoid() {
 
 Implicit type declaration is when you declare a variable without providing a type directly and living that work to the compiler.
 
-```ts 
+```ts
 let str = "A string";
 //    ^? - let str: string
 ```
@@ -166,7 +166,7 @@ let str = "A string";
 
 Explicit type declaration is when you declare a variable assigning it a type.
 
-```ts 
+```ts
 let str: string = "A string";
 //    ^? - let str: string
 ```
