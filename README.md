@@ -8,9 +8,9 @@
       - [Explicit](#explicit)
     - [Type Manipulation](#type-manipulation)
       - [Type Alias](#type-alias)
+      - [Interfaces](#interfaces)
       - [Intersection](#intersection)
       - [Union](#union)
-      - [Interfaces](#interfaces)
       - [Extends](#extends)
       - [`type` vs `interface`](#type-vs-interface)
         - [Extending](#extending)
@@ -229,6 +229,17 @@ let helloWorld = concat("hello ", "world");
 helloWorld = "Hello";
 ```
 
+#### [Interfaces](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#interfaces)
+
+An `interface` declaration is another way to declare a type. It's mostly used to declare object types. They can be extended by other interfaces and implemented in classes using the implements keyword.
+
+```ts
+interface Point {
+    x: number;
+    y: number;
+}
+```
+
 #### Intersection
 
 The intersection operator (`&`) can be used just like the `extends` keyword but for type alises instead of classes.
@@ -277,17 +288,6 @@ a = {};
 // As you can see the `never` is excluded
 type BooleanOrNumber = boolean | never | number
 //   ^? - type BooleanOrNumber = number | boolean
-```
-
-#### [Interfaces](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#interfaces)
-
-An `interface` declaration is another way to declare a type. It's mostly used to declare object types. They can be extended by other interfaces and implemented in classes using the implements keyword.
-
-```ts
-interface Point {
-    x: number;
-    y: number;
-}
 ```
 
 #### Extends

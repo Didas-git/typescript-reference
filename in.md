@@ -7,16 +7,14 @@
       - [Implicit](#implicit)
       - [Explicit](#explicit)
     - [Type Manipulation](#type-manipulation)
-      - [Keywords](#keywords)
-        - [Type Alias](#type-alias)
-        - [Intersection](#intersection)
-        - [Union](#union)
-        - [Interfaces](#interfaces)
-        - [Extends](#extends)
-        - [`type` vs `interface`](#type-vs-interface)
-          - [Extending](#extending)
-          - [Adding fields](#adding-fields)
-      - [Basic](#basic)
+      - [Type Alias](#type-alias)
+      - [Interfaces](#interfaces)
+      - [Intersection](#intersection)
+      - [Union](#union)
+      - [Extends](#extends)
+      - [`type` vs `interface`](#type-vs-interface)
+        - [Extending](#extending)
+        - [Adding fields](#adding-fields)
   - [Main Sources](#main-sources)
 
 Basics
@@ -189,9 +187,7 @@ let str: string = "A string";
 
 ### Type Manipulation
 
-#### Keywords
-
-##### [Type Alias](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-aliases)
+#### [Type Alias](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-aliases)
 
 The `type` keyword is used to create and name any type but as it is only an alias, it cannot be used to create  different or unique versions of the same type.
 
@@ -214,7 +210,18 @@ let helloWorld = concat("hello ", "world");
 helloWorld = "Hello";
 ```
 
-##### Intersection
+#### [Interfaces](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#interfaces)
+
+An `interface` declaration is another way to declare a type. It's mostly used to declare object types. They can be extended by other interfaces and implemented in classes using the implements keyword.
+
+```ts
+interface Point {
+    x: number;
+    y: number;
+}
+```
+
+#### Intersection
 
 The intersection operator (`&`) can be used just like the `extends` keyword but for type alises instead of classes.
 
@@ -240,7 +247,7 @@ function draw(circle: Circle & Colors): Circle & Colors {
 draw({ radius: 30 })
 ```
 
-##### Union
+#### Union
 
 The union operator (`|`) in typescript works like an `or`.</br>
 When paired with `never` a union type will ignore it and removei t from the union.
@@ -259,27 +266,16 @@ type BooleanOrNumber = boolean | never | number
 //   ^?
 ```
 
-##### [Interfaces](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#interfaces)
+#### Extends
 
-An `interface` declaration is another way to declare a type. It's mostly used to declare object types. They can be extended by other interfaces and implemented in classes using the implements keyword.
-
-```ts
-interface Point {
-    x: number;
-    y: number;
-}
-```
-
-##### Extends
-
-##### `type` vs `interface`
+#### `type` vs `interface`
 
 Type alias and interface are pretty simillar, the main differences are:
 - A type cannot be extended (using the `extends` keyword).
 - A type cannot have duplicate identifiers.
 - A type does not extend a class wit hthe same name.
 
-###### Extending
+##### Extending
 
 <table>
 <tr>
@@ -316,7 +312,7 @@ type Cat = Animal & {
 </tr>
 </table>
 
-###### Adding fields
+##### Adding fields
 
 <table>
 <tr>
@@ -353,10 +349,6 @@ type Story = {
 </td>
 </tr>
 </table>
-
-#### Basic
-
-
 
 Main Sources
 ------------
