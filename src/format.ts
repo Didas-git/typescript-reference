@@ -2,7 +2,7 @@ import { twoslasher } from "@typescript/twoslash"
 
 // Source: https://github.com/typescript-community/community-bot/blob/master/src/modules/twoslash.ts
 export function format(s: string): string {
-    const ret = twoslasher(s.replace("```ts", "").replace("twoslash", "").replace("```", ""), "ts", {
+    const ret = twoslasher(s, "ts", {
         defaultCompilerOptions: {
             target: 99,
             module: 1,
@@ -113,5 +113,5 @@ export function format(s: string): string {
     });
 
     const output = resultLines.join('\n');
-    return `\`\`\`ts${output.slice(0, -1)}\`\`\``
+    return `\`\`\`ts\n${output.slice(0, -1)}\n\`\`\``
 };
