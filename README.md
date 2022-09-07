@@ -6,6 +6,17 @@
     - [Type Declaration](#type-declaration)
       - [Implicit](#implicit)
       - [Explicit](#explicit)
+    - [Type Manipulation](#type-manipulation)
+      - [Keywords](#keywords)
+        - [Type Alias](#type-alias)
+        - [Intersection](#intersection)
+        - [Union](#union)
+        - [Interfaces](#interfaces)
+        - [Extends](#extends)
+        - [`type` vs `interface`](#type-vs-interface)
+          - [Extending](#extending)
+          - [Adding fields](#adding-fields)
+      - [Basic](#basic)
   - [Main Sources](#main-sources)
 
 Basics
@@ -125,18 +136,18 @@ The never type can usually appear when union types have nothing left and can be 
 ```ts
 //source: https://www.typescriptlang.org/docs/handbook/2/functions.html#never
 function fail(msg: string): never {
-	throw new Error(msg)
+    throw new Error(msg)
 }
 
 function fn(x: string | number) {
-	if (typeof x === "string") {
-		// do something
-	} else if (typeof x === "number") {
-		// do something else
-	} else {
+    if (typeof x === "string") {
+        // do something
+    } else if (typeof x === "number") {
+        // do something else
+    } else {
         x;
 //      ^? - (parameter) x: never
-	}
+    }
 }
 ```
 
@@ -159,7 +170,7 @@ Implicit type declaration is when you declare a variable without providing a typ
 
 ```ts
 let str = "A string";
-//    ^? - let str: string
+//  ^? - let str: string
 ```
 
 #### Explicit
@@ -168,10 +179,145 @@ Explicit type declaration is when you declare a variable assigning it a type.
 
 ```ts
 let str: string = "A string";
-//    ^? - let str: string
+//  ^? - let str: string
 ```
+
+### Type Manipulation
+
+#### Keywords
+
+##### [Type Alias](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-aliases)
+
+The `type` keyword is used to create and name any type but as it is only an alias it cannot be used to create  different or unique versions of the same type.
+
+```ts
+type Point = {
+    x: number,
+    y: number
+};
+
+type SanitizedString = string;
+
+function sanitizeInput(str: string): SanitizedString {
+    return str.replace(/[^a-z0-9áéíóúñü \.,_-]/gim,"").trim()
+}
+
+// Create a sanitized input
+let userInput = sanitizeInput("hello\nworld");
+ 
+// Can still be re-assigned with a string though
+userInput = "new input";
+```
+
+##### Intersection
+
+The intersection operator (`&`) can be used just like the `extends` keyword but for types instead of interfaces.
+
+##### Union
+
+##### [Interfaces](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#interfaces)
+
+An `interface` declaration is another way to declare a type but its most used to declare object types
+
+```ts
+interface Point {
+    x: number;
+    y: number
+}
+```
+
+##### Extends
+
+##### `type` vs `interface`
+
+Type alias and interface are pretty simillar, the main differences are:
+- A type cannot be extended (using the `extends` keyword).
+- A type cannot have duplicate identifiers.
+- A type does not extend a class wit hthe same name.
+
+###### Extending
+
+<table>
+<tr>
+<th>Interfaces</th>
+<th>Types</th>
+</tr>
+<tr>
+<td>
+
+```ts
+interface Animal {
+    name: string
+}
+
+interface Cat extends Animal {
+    race: string
+}
+```
+
+</td>
+<td>
+
+```ts
+type Animal = {
+    name: string
+}
+
+type Cat = Animal & {
+    race: string
+}
+```
+
+</td>
+</tr>
+</table>
+
+###### Adding fields
+
+<table>
+<tr>
+<th>Interfaces</th>
+<th>Types</th>
+</tr>
+<tr>
+<td>
+
+```ts
+interface Story {
+    title: string
+}
+
+interface Story {
+    body: string
+}
+```
+
+</td>
+<td>
+
+```ts
+type Story = {
+//   ^^^^^
+// Duplicate identifier 'Story'.
+    title: string
+}
+
+type Story = {
+//   ^^^^^
+// Duplicate identifier 'Story'.
+    body: string
+}
+```
+
+</td>
+</tr>
+</table>
+
+#### Basic
+
+
 
 Main Sources
 ------------
-[**`MDN`**](https://developer.mozilla.org/)
+[**`MDN`**](https://developer.mozilla.org/)</br>
 [**`TS Handbook`**](https://www.typescriptlang.org/docs/handbook)
