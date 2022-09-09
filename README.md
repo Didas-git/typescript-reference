@@ -6,15 +6,22 @@
     - [Type Declaration](#type-declaration)
       - [Implicit](#implicit)
       - [Explicit](#explicit)
+      - [Arrays](#arrays)
+      - [Tuples](#tuples)
+      - [Objects](#objects)
     - [Type Manipulation](#type-manipulation)
       - [Type Alias](#type-alias)
       - [Interfaces](#interfaces)
       - [Intersection](#intersection)
       - [Union](#union)
+      - [Optional](#optional)
       - [Extends](#extends)
+      - [Implements](#implements)
+      - [Assertion](#assertion)
       - [`type` vs `interface`](#type-vs-interface)
         - [Extending](#extending)
         - [Adding fields](#adding-fields)
+        - [Augmenting Classes](#augmenting-classes)
   - [Main Sources](#main-sources)
 
 Basics
@@ -155,7 +162,7 @@ const b: number = a
 ```
 
 - [`never`](https://www.typescriptlang.org/docs/handbook/2/functions.html#never) -
-The never type can usually appear when union types have nothing left and can be used as a return type for functions that throw exeptions. The most comun use of `never` is on [condtional](#conditional-types) and [complex](#complex-types) types but more on that later.
+The never type can usually appear when union types have nothing left and can be used as a return type for functions that throw exeptions. The most comun use of `never` is on [conditional](#conditional-types) and [complex](#complex-types) types but more on that later.
 
 ```ts
 function fail(msg: string): never {
@@ -204,6 +211,43 @@ let str: string = "A string";
 //  ^? - let str: string
 ```
 
+#### Arrays
+
+Declaring array types can be done in 2 ways:
+- Using the `Array` generic.
+- Using an array literal.
+
+```ts
+let stringArray: Array<string>;
+let numberArray: number[];
+let numberAndBooleanArray: Array<number | boolean>;
+let stringAndBooleanArray: (string | boolean)[];
+```
+
+#### Tuples
+
+A tuple is a fixed length array that can have a unique type per element, there are however ways to define an infinite length tuple, however, is not recommended and you should use an [array](#arrays) instead.
+
+```ts
+let tuple: [string, number, boolean] = ["hello", 3, true, "world"];
+//  ^^^^^
+// Type '[string, number, true, string]' is not assignable to type '[string, number, boolean]'.
+//   Source has 4 element(s) but target allows only 3.
+tuple = ["hello", true];
+//                ^^^^
+// Type 'boolean' is not assignable to type 'number'.
+
+let infiniteTuple: [string, ...Array<number>] = ["hello", 1, 2, 3];
+infiniteTuple = ["hello", 1, 2, "world"];
+//^^^^^^^^^^^
+// Type '[string, number, number, string]' is not assignable to type '[string, ...number[]]'.
+//   Type at positions 1 through 3 in source is not compatible with type at position 1 in target.
+//     Type 'string | number' is not assignable to type 'number'.
+//       Type 'string' is not assignable to type 'number'.
+```
+
+#### Objects
+
 ### Type Manipulation
 
 #### [Type Alias](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-aliases)
@@ -231,7 +275,7 @@ helloWorld = "Hello";
 
 #### [Interfaces](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#interfaces)
 
-An `interface` declaration is another way to declare a type. It's mostly used to declare object types. They can be extended by other interfaces and implemented in classes using the implements keyword.
+An `interface` declaration is another way to declare a type and it's mostly used to declare object types. They can be extended by other interfaces and implemented in classes using the implements keyword.
 
 ```ts
 interface Point {
@@ -257,12 +301,12 @@ interface Colors {
 
 type ColorfullCircle = Circle & Colors;
 
-// It can also be used inside functions
+// It can also be used inside function arguments and return types
 function draw(circle: Circle & Colors): Circle & Colors {
     return circle;
 }
 
-draw({ radius: 30 })
+draw({ radius: 30 });
 //   ^^^^^^^^^^^^^^
 // Argument of type '{ radius: number; }' is not assignable to parameter of type 'Circle & Colors'.
 //   Type '{ radius: number; }' is missing the following properties from type 'Colors': r, g, b
@@ -286,18 +330,111 @@ a = {};
 // Type '{}' is not assignable to type 'StringOrNumber'.
 
 // As you can see the `never` is excluded
-type BooleanOrNumber = boolean | never | number
+type BooleanOrNumber = boolean | never | number;
 //   ^? - type BooleanOrNumber = number | boolean
+
+// It can also be used inside function arguments and return types
+function stringOrNumber(o: string | number): string | number {
+    return o;
+}
+```
+
+#### Optional
+
+In typescript you can use `?` on a property to make it optional.</br>
+On a side note, making a type `undefined` doesnt mean it is optional even tho optional types may show as possibly `undefined`.
+
+```ts
+interface User {
+    name: string;
+    age?: number;
+    genre: string | undefined;
+}
+
+const user1: User = {
+    name: "Martin",
+    genre: undefined,
+}
+
+const user2: User = {
+//    ^^^^^
+// Property 'genre' is missing in type '{ name: string; }' but required in type 'User'.
+    name: "Niek",
+}
+
 ```
 
 #### Extends
+
+The `extends` keyword can be used in 2 ways:
+- [Conditional Types](#conditional-types) that will be covered later on.
+- Extend interfaces.
+
+Extending interfaces works just like extending classes in vanilla javascript but with the difference that you can extend multiple interfaces.
+
+```ts
+interface Label {
+    labelName: string;
+    date: string;
+}
+
+interface Artist {
+    artistName: string;
+} 
+
+interface Song extends Label, Artist {
+    songName: string;
+    realeseDate: Date;
+}
+```
+
+#### Implements
+
+The `implements` keyword can be used to make sure than a class satisfies the definition of the given interface/type.
+
+```ts
+interface Foo {
+    foo: () => void;
+}
+
+type Bar = {
+    bar: () => void
+}
+
+class MyClass implements Foo, Bar {
+//    ^^^^^^^
+// Class 'MyClass' incorrectly implements interface 'Bar'.
+//   Property 'bar' is missing in type 'MyClass' but required in type 'Bar'.
+    foo() {
+        return;
+    }
+}
+```
+
+#### Assertion
+
+Type assertion can be used to convert one type to another. In very unique cases you might need to cast to `unknown` first, however, it's not recommended..</br>
+Type assertion can be done in 2 ways:
+- Using `<>` (only works on non JSX/TSX files).
+- Using the `as` keyword.
+
+```ts
+const a = <number>"hello";
+//        ^^^^^^^^^^^^^^^
+// Conversion of type 'string' to type 'number' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+const b = <number><unknown>"hello";
+const x = "hello" as number;
+//        ^^^^^^^^^^^^^^^^^
+// Conversion of type 'string' to type 'number' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+const y = "hello" as unknown as number;
+```
 
 #### `type` vs `interface`
 
 Type alias and interface are pretty simillar, the main differences are:
 - A type cannot be extended (using the `extends` keyword).
 - A type cannot have duplicate identifiers.
-- A type does not extend a class wit hthe same name.
+- A type does not augment a class wit hthe same name.
 
 ##### Extending
 
@@ -371,6 +508,63 @@ type Story = {
 // Duplicate identifier 'Story'.
     body: string
 }
+```
+
+</td>
+</tr>
+</table>
+
+##### Augmenting Classes
+
+<table>
+<tr>
+<th>Interfaces</th>
+<th>Types</th>
+</tr>
+<tr>
+<td>
+
+```ts
+interface MyClass {
+    foo: () => void;
+    bar(): void;
+}
+
+class MyClass {
+    bazz() {
+        return;
+    }
+}
+
+const myClassInstance = new MyClass();
+
+myClassInstance.foo();
+myClassInstance.bar();
+myClassInstance.bazz();
+```
+
+</td>
+<td>
+
+```ts
+type MyClass = {
+//   ^^^^^^^
+// Duplicate identifier 'MyClass'.
+    foo: () => void;
+    bar(): void;
+}
+
+class MyClass {
+//    ^^^^^^^
+// Duplicate identifier 'MyClass'.
+    bazz() {
+        return;
+    }
+}
+
+const myClassInstance = new MyClass();
+//                          ^^^^^^^
+// 'MyClass' only refers to a type, but is being used as a value here.
 ```
 
 </td>
