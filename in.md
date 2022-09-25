@@ -19,7 +19,7 @@
       - [Optional](#optional)
       - [Extends](#extends)
       - [Implements](#implements)
-      - [Assertion](#assertion)
+      - [Type Assertion](#type-assertion)
         - [`as const`](#as-const)
       - [`type` vs `interface`](#type-vs-interface)
         - [Extending](#extending)
@@ -452,7 +452,7 @@ class MyClass implements Foo, Bar {
 }
 ```
 
-#### Assertion
+#### Type Assertion
 
 Type assertion can be used to convert one type to another. In very unique cases you might need to cast to `unknown` first, however, it's not recommended.\
 Type assertion can be done in 2 ways:
