@@ -25,6 +25,27 @@
         - [Extending](#extending)
         - [Adding fields](#adding-fields)
         - [Augmenting Classes](#augmenting-classes)
+  - [Advanced](#advanced)
+    - [Utility Types](#utility-types)
+      - [Built-In](#built-in)
+        - [PropertyKey](#propertykey)
+        - [Awaited\<T>](#awaitedt)
+        - [Partial\<T>](#partialt)
+        - [Required\<T>](#requiredt)
+        - [Readonly\<T>](#readonlyt)
+        - [Record\<K, T>](#recordk-t)
+        - [Pick\<T, K>](#pickt-k)
+        - [Exclude\<U, E>](#excludeu-e)
+        - [Omit\<T, K>](#omitt-k)
+        - [Extract\<T, U>](#extractt-u)
+        - [NonNullable\<T>](#nonnullablet)
+        - [Parameters\<T>](#parameterst)
+        - [ConstructorParameters\<T>](#constructorparameterst)
+        - [ReturnType\<T>](#returntypet)
+        - [InstanceType\<T>](#instancetypet)
+        - [ThisParameterType\<T>](#thisparametertypet)
+        - [OmitThisParameter\<T>](#omitthisparametert)
+        - [ThisType\<T>](#thistypet)
   - [Main Sources](#main-sources)
 
 Basics
@@ -278,9 +299,7 @@ bar = foo
 #### `const` vs `let`
 
 In vanilla javascript the main difference between using `const` and `let` is that you cannot reassing nor redeclare a `const`, however, typescript adds another main difference.\
-Values assigned to a `const` will turn into [`unit types`](#unit-types) when possible*, while `let` will be assigned to its [`primitive`](#primitive-types) type.
-
-<h5>* By default 'objects' will work the same in 'const' as they do in 'let', however, this can be changed by using 'as const'.</h5>
+Values assigned to a `const` will turn into [`unit types`](#unit-types) when possible[^2], while `let` will be assigned to its [`primitive`](#primitive-types) type.
 
 ```ts
 const foo = "foo";
@@ -613,9 +632,166 @@ const myClassInstance = new MyClass();
 </tr>
 </table>
 
+Advanced
+--------
+
+### Utility Types
+
+Utility types are types made to help commun manipulations.\
+The idea of this chapter is to show how they are made and explain how they work.
+
+#### Built-In
+
+##### PropertyKey
+
+```ts
+// @noErrors
+type PropertyKey = string | number | symbol;
+
+// This is the same as:
+type PropertyKey = keyof any;
+//   ^?
+```
+
+##### Awaited\<T>
+
+```ts
+// @noErrors
+type Awaited<T> = T extends null | undefined
+    ? T
+        : T extends object & { then(onfulfilled: infer F): any }
+            ? F extends ((value: infer V, ...args: any) => any) 
+                ? Awaited<V>
+                : never
+        :T;
+```
+
+##### Partial\<T>
+
+```ts
+// @noErrors
+type Partial<T> = {
+    [P in keyof T]?: T[P];
+};
+```
+
+##### Required\<T>
+
+```ts
+// @noErrors
+type Required<T> = {
+    [P in keyof T]-?: T[P];
+};
+```
+
+##### Readonly\<T>
+
+```ts
+// @noErrors
+type Readonly<T> = {
+    readonly [P in keyof T]: T[P];
+};
+```
+
+##### Record\<K, T>
+
+```ts
+// @noErrors
+type Record<K extends keyof any, T> = {
+    [P in K]: T;
+};
+```
+
+##### Pick\<T, K>
+
+```ts
+// @noErrors
+type Pick<T, K extends keyof T> = {
+    [P in K]: T[P];
+};
+```
+
+##### Exclude\<U, E>
+
+```ts
+// @noErrors
+type Exclude<U, E> = U extends E ? never : U;
+```
+
+##### Omit\<T, K>
+
+```ts
+// @noErrors
+type Omit<T, K extends keyof any> = Pick<T, Exclude<keyof T, K>>;
+```
+
+##### Extract\<T, U>
+
+```ts
+// @noErrors
+type Extract<T, U> = T extends U ? T : never;
+```
+
+##### NonNullable\<T>
+
+```ts
+// @noErrors
+type NonNullable<T> = T & {};
+```
+
+##### Parameters\<T>
+
+```ts
+// @noErrors
+type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never;
+```
+
+##### ConstructorParameters\<T>
+
+```ts
+// @noErrors
+type ConstructorParameters<T extends abstract new (...args: any) => any> = T extends abstract new (...args: infer P) => any ? P : never;
+```
+
+##### ReturnType\<T>
+
+```ts
+// @noErrors
+type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
+```
+
+##### InstanceType\<T>
+
+```ts
+// @noErrors
+type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;
+```
+
+##### ThisParameterType\<T>
+
+```ts
+// @noErrors
+type ThisParameterType<T> = T extends (this: infer U, ...args: never) => any ? U : unknown;
+```
+
+##### OmitThisParameter\<T>
+
+```ts
+// @noErrors
+type OmitThisParameter<T> = unknown extends ThisParameterType<T> ? T : T extends (...args: infer A) => infer R ? (...args: A) => R : T;
+```
+
+##### ThisType\<T>
+
+```ts
+// @noErrors
+interface ThisType<T> { }
+```
+
 Main Sources
 ------------
 [**`MDN`**](https://developer.mozilla.org/)\
 [**`TS Handbook`**](https://www.typescriptlang.org/docs/handbook)
 
 [^1]: `Symbol.for` can bypass this unique behaviour, read the [MDN Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/for) for more information.
+[^2]: By default `objects` will work the same in `const` as they do in `let`, however, this can be changed by using [`as const`](#as-const).
