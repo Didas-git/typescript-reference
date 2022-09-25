@@ -309,7 +309,7 @@ bar = foo
 In vanilla javascript the main difference between using `const` and `let` is that you cannot reassing nor redeclare a `const`, however, typescript adds another main difference.\
 Values assigned to a `const` will turn into [`unit types`](#unit-types) when possible*, while `let` will be assigned to its [`primitive`](#primitive-types) type.
 
-<h5>* By default 'objects' will work the same in 'const' as they do in 'let', however, this can be changed by using 'as const'</h5>. 
+<h5>* By default 'objects' will work the same in 'const' as they do in 'let', however, this can be changed by using 'as const'.</h5>
 
 ```ts
 const foo = "foo";
@@ -327,11 +327,6 @@ const obj = { a: "hello", b: 3 }
 //        a: string;
 //        b: number;
 //    }
-let lobj = { a: "hello", b: 3 }
-//  ^? - let lobj: {
-//      a: string;
-//      b: number;
-//  }
 ```
 
 ### Type Manipulation
