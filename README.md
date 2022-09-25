@@ -9,6 +9,8 @@
       - [Arrays](#arrays)
       - [Tuples](#tuples)
       - [Objects](#objects)
+      - [Unit Types](#unit-types)
+      - [`const` vs `let`](#const-vs-let)
     - [Type Manipulation](#type-manipulation)
       - [Type Alias](#type-alias)
       - [Interfaces](#interfaces)
@@ -18,6 +20,7 @@
       - [Extends](#extends)
       - [Implements](#implements)
       - [Assertion](#assertion)
+        - [`as const`](#as-const)
       - [`type` vs `interface`](#type-vs-interface)
         - [Extending](#extending)
         - [Adding fields](#adding-fields)
@@ -248,6 +251,89 @@ infiniteTuple = ["hello", 1, 2, "world"];
 
 #### Objects
 
+There are 3 ways to declare object types, those being:
+- Using [`interfaces`](#interfaces) or [`type`](#type-alias) aliases.
+- Using object literals.
+- Using the `Record` generic.
+
+```ts
+interface IObj {
+    a: string;
+    b: number
+}
+
+type TObj = {
+    a: string,
+    b: number
+}
+
+let iObj: IObj;
+let tObj: TObj;
+let normalObj: { a: string, b: number };
+let recordObj: Record<string, string | number>;
+let recordObj2: Record<"a" | "b", string | number>
+```
+
+If you want to create a tuple that you can assign any object, using `Record` is highly recommended over the `object` type.
+
+```ts
+let obj: object = {};
+obj = [];
+
+// More on 'Record' and 'PropertyKey' later
+let record: Record<PropertyKey, unknown> = {};
+record = [];
+//^^^^
+// Type 'never[]' is not assignable to type 'Record<PropertyKey, unknown>'.
+//   Index signature for type 'string' is missing in type 'never[]'.
+```
+
+#### Unit Types
+
+Unit types are subsets of [primitive types](#primitive-types) that can only contain one value.
+
+```ts
+let foo = "foo";
+//  ^? - let foo: string
+
+let bar: "bar";
+//  ^? - let bar: "bar"
+
+bar = foo
+//^
+// Type 'string' is not assignable to type '"bar"'.
+```
+
+#### `const` vs `let`
+
+In vanilla javascript the main difference between using `const` and `let` is that you cannot reassing nor redeclare a `const`, however, typescript adds another main difference.\
+Values assigned to a `const` will turn into [`unit types`](#unit-types) when possible*, while `let` will be assigned to its [`primitive`](#primitive-types) type.\
+
+<h5>* By default `objects` will work the same in `const` as they do in `let`, however, this can be changed by using `as const`</h5>. 
+
+```ts
+const foo = "foo";
+//    ^? - const foo: "foo"
+let bar = "bar";
+//  ^? - let bar: string
+
+const num = 3;
+//    ^? - const num: 3
+let lnum = 3;
+//  ^? - let lnum: number
+
+const obj = { a: "hello", b: 3 }
+//    ^? - const obj: {
+//        a: string;
+//        b: number;
+//    }
+let lobj = { a: "hello", b: 3 }
+//  ^? - let lobj: {
+//      a: string;
+//      b: number;
+//  }
+```
+
 ### Type Manipulation
 
 #### [Type Alias](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#type-aliases)
@@ -314,7 +400,7 @@ draw({ radius: 30 });
 
 #### Union
 
-The union operator (`|`) in typescript works like an `or`.</br>
+The union operator (`|`) in typescript works like an `or`.\
 When paired with `never` a union type will ignore it and removei t from the union.
 
 ```ts
@@ -341,7 +427,7 @@ function stringOrNumber(o: string | number): string | number {
 
 #### Optional
 
-In typescript you can use `?` on a property to make it optional.</br>
+In typescript you can use `?` on a property to make it optional.\
 On a side note, making a type `undefined` doesnt mean it is optional even tho optional types may show as possibly `undefined`.
 
 ```ts
@@ -413,7 +499,7 @@ class MyClass implements Foo, Bar {
 
 #### Assertion
 
-Type assertion can be used to convert one type to another. In very unique cases you might need to cast to `unknown` first, however, it's not recommended..</br>
+Type assertion can be used to convert one type to another. In very unique cases you might need to cast to `unknown` first, however, it's not recommended.\
 Type assertion can be done in 2 ways:
 - Using `<>` (only works on non JSX/TSX files).
 - Using the `as` keyword.
@@ -427,6 +513,24 @@ const x = "hello" as number;
 //        ^^^^^^^^^^^^^^^^^
 // Conversion of type 'string' to type 'number' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
 const y = "hello" as unknown as number;
+```
+
+##### `as const`
+
+The `as const` assertion can be used to make a variable readonly and also preserve its types.
+
+```ts
+const obj = { a: "hello", b: 3 } as const
+//    ^? - const obj: {
+//        readonly a: "hello";
+//        readonly b: 3;
+//    }
+
+let otherObj = { a: 3, b: "hello" } as const
+//  ^? - let otherObj: {
+//      readonly a: 3;
+//      readonly b: "hello";
+//  }
 ```
 
 #### `type` vs `interface`
@@ -573,7 +677,7 @@ const myClassInstance = new MyClass();
 
 Main Sources
 ------------
-[**`MDN`**](https://developer.mozilla.org/)</br>
+[**`MDN`**](https://developer.mozilla.org/)\
 [**`TS Handbook`**](https://www.typescriptlang.org/docs/handbook)
 
 [^1]: `Symbol.for` can bypass this unique behaviour, red the [MDN Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/for) for more information.
