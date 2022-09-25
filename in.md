@@ -248,7 +248,7 @@ let recordObj: Record<string, string | number>;
 let recordObj2: Record<"a" | "b", string | number>
 ```
 
-If you want to create a tuple that you can assign any object, using `Record` is highly recommended over the `object` type.
+If you want to create a variable that can store any object, using `Record` is highly recommended over the `object` type.
 
 ```ts
 // @errors: 2322
