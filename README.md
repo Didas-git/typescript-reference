@@ -307,9 +307,9 @@ bar = foo
 #### `const` vs `let`
 
 In vanilla javascript the main difference between using `const` and `let` is that you cannot reassing nor redeclare a `const`, however, typescript adds another main difference.\
-Values assigned to a `const` will turn into [`unit types`](#unit-types) when possible*, while `let` will be assigned to its [`primitive`](#primitive-types) type.\
+Values assigned to a `const` will turn into [`unit types`](#unit-types) when possible*, while `let` will be assigned to its [`primitive`](#primitive-types) type.
 
-<h5>* By default `objects` will work the same in `const` as they do in `let`, however, this can be changed by using `as const`</h5>. 
+<h5>* By default 'objects' will work the same in 'const' as they do in 'let', however, this can be changed by using 'as const'</h5>. 
 
 ```ts
 const foo = "foo";
@@ -538,7 +538,7 @@ let otherObj = { a: 3, b: "hello" } as const
 Type alias and interface are pretty simillar, the main differences are:
 - A type cannot be extended (using the `extends` keyword).
 - A type cannot have duplicate identifiers.
-- A type does not augment a class wit hthe same name.
+- A type does not augment a class with the same name.
 
 ##### Extending
 
@@ -680,4 +680,4 @@ Main Sources
 [**`MDN`**](https://developer.mozilla.org/)\
 [**`TS Handbook`**](https://www.typescriptlang.org/docs/handbook)
 
-[^1]: `Symbol.for` can bypass this unique behaviour, red the [MDN Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/for) for more information.
+[^1]: `Symbol.for` can bypass this unique behaviour, read the [MDN Docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/for) for more information.
