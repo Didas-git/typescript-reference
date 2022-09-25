@@ -30,6 +30,8 @@
 Basics
 ------
 
+In this chapter i will focus on just showing the pure basics of typescript, what you have/should know to get started creating your projects and some things to might be aware when you start to move to more advanced/complex types.
+
 ### Primitive Types
 
 Typescript primitives are the same as the [javascript](https://developer.mozilla.org/en-US/docs/Glossary/Primitive) primitives with some additions.
